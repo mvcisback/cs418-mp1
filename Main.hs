@@ -2,25 +2,26 @@ import Graphics.UI.GLUT
 import Linear
 import Data.IORef
 
-delta = 1/4 :: GLfloat
-dx = V3 delta 0 0
-dy = V3 0 delta 0
-o = (V3 0 0 1)
-b = o - 1.5*dx + 2*dy
-a = b + dy
-c = b + dx
-d = b + 2*dx
-e = b + 3*dx
-f = a + 3*dx
-g = c - 2*dy
-h = d - 2*dy
-i = b - 2*dy
-j = e - 2*dy
-k = i - dy
-l = j - dy
+epsilon = 1.99
+dx = V3 (1/4) 0 0
+dy = V3 0 (1/4) 0
+o = V3 0 0 1
+a = o - 2*dx + 3*dy
+b = o + 2*dx + 3*dy
+c = o - 2*dx + 2*dy
+d = o + 2*dx + 2*dy
+e = o - dx + epsilon*dy
+f = o + dx + epsilon*dy
+g = o - dx - epsilon*dy
+h = o + dx - epsilon*dy
+i = o - 2*dx - 2*dy
+j = o + 2*dx - 2*dy
+k = o - 2*dx - 3*dy
+l = o + 2*dx - 3*dy
+
 
 myPoints :: [V3 GLfloat]    
-myPoints = [a, b, c, g, i, k, l, j, h, d, e, f]
+myPoints = [a, b, c, d, e, f, g, h, i, j, k, l]
 genPoints t = map move myPoints
     where move p = (wiggle t p) !* p
 
@@ -48,6 +49,6 @@ display :: IORef GLfloat-> DisplayCallback
 display tp = do 
   clear [ColorBuffer]
   t <- readIORef tp
-  renderPrimitive LineLoop $
+  renderPrimitive TriangleStrip $
      mapM_ (\(V3 x y z) -> vertex $ Vertex3 x y z) $ (genPoints t)
   flush
