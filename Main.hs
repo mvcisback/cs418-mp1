@@ -2,7 +2,7 @@ import Graphics.UI.GLUT
 import Linear
 import Data.IORef
 
-epsilon = 1.5
+epsilon = 1.9
 dx = V3 (1/4) 0 0
 dy = V3 0 (1/4) 0
 o = V3 0 0 1
@@ -58,5 +58,5 @@ display :: IORef GLfloat-> DisplayCallback
 display tp = do 
   clear [ColorBuffer]
   t <- readIORef tp
-  render2 t
+  (if ((round t) `mod` 5) < 2 then render1 else render2) t
   swapBuffers
