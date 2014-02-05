@@ -23,12 +23,12 @@ l = o + 2*dx - 3*dy
 w = 1
 wiggle :: GLfloat -> V3 GLfloat -> M33 GLfloat
 wiggle t (V3 x y _) = V3 (V3 1 0 offset) (V3 0 1 offset) (V3 0 0 1)
-    where offset = (sin (w*t)) * x * y 
+    where offset = sin (w*t) * x * y 
 
 render primative points t = renderPrimitive primative $
                             mapM_ (\(V3 x y z) -> vertex $ Vertex3 x y z) (genPoints t)
     where genPoints t = map move points
-              where move p = (wiggle t p) !* p
+              where move p = wiggle t p !* p
 
 render1 = render TriangleStrip points
           where points :: [V3 GLfloat]
@@ -58,5 +58,5 @@ display :: IORef GLfloat-> DisplayCallback
 display tp = do 
   clear [ColorBuffer]
   t <- readIORef tp
-  (if ((round t) `mod` 5) < 2 then render1 else render2) t
+  (if round t `mod` 5 < 2 then render1 else render2) t
   swapBuffers
