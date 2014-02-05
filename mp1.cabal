@@ -6,7 +6,7 @@ version:             0.1.0.0
 -- synopsis:            
 -- description:         
 -- license:             
-license-file:        LICENSE
+-- license-file:        LICENSE
 author:              Marcell Vazquez-Chanlatte
 maintainer:          vazque16@illinois.edu
 -- copyright:           
@@ -16,7 +16,7 @@ build-type:          Simple
 cabal-version:       >=1.10
 
 executable mp1
-  -- main-is:             
+  main-is: Main.hs
   -- other-modules:       
   -- other-extensions:    
   build-depends:       base >=4.6 && <4.7, GLUT >=2.5 && <2.6, linear >=1.4 && <1.5
