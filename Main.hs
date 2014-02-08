@@ -42,8 +42,9 @@ render2 = render Lines points
 
 main :: IO ()
 main = do
-  (_progName, _args) <- getArgsAndInitialize
-  _window <- createWindow "MP1"
+  let _progName = "MP1"
+  _args <- initialize _progName []
+  _window <- createWindow _progName
   displayCallback $= display
   idleCallback $= Just idle
   mainLoop
