@@ -1,6 +1,6 @@
 import Graphics.UI.GLUT
 import Linear
-import Data.IORef
+import Data.Time.Clock.POSIX
 
 epsilon = 1.9
 dx = V3 (1/4) 0 0
@@ -20,7 +20,7 @@ k = o - 2*dx - 3*dy
 l = o + 2*dx - 3*dy
 
 
-w = 1
+w = 2*pi
 wiggle :: GLfloat -> V3 GLfloat -> M33 GLfloat
 wiggle t (V3 x y _) = V3 (V3 1 0 offset) (V3 0 1 offset) (V3 0 0 1)
     where offset = sin (w*t) * x * y 
@@ -44,19 +44,21 @@ main :: IO ()
 main = do
   (_progName, _args) <- getArgsAndInitialize
   _window <- createWindow "MP1"
-  tp <- newIORef (0 :: GLfloat)
-  displayCallback $= display tp
-  idleCallback $= Just (idle tp)
+  displayCallback $= display
+  idleCallback $= Just idle
   mainLoop
  
-idle :: IORef GLfloat -> IdleCallback
-idle tp = do
-  tp $~! (+ 0.001)
+idle :: IdleCallback
+idle = do
   postRedisplay Nothing
 
-display :: IORef GLfloat-> DisplayCallback
-display tp = do 
+display :: DisplayCallback
+display = do 
   clear [ColorBuffer]
-  t <- readIORef tp
-  (if round t `mod` 5 < 2 then render1 else render2) t
+  t <- getPOSIXTime
+  (if round t `mod` 5 < 2 then render1 else render2) (stepSize t)
   swapBuffers
+
+stepSize :: POSIXTime -> GLfloat
+stepSize t = (fromRational . toRational) x :: GLfloat
+    where x = abs $ (fromIntegral . truncate $ t) - t
