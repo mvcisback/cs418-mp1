@@ -1,3 +1,6 @@
+{-# LANGUAGE TemplateHaskell #-}
+
+import Options.Applicative
 import Graphics.UI.GLUT
 import Linear
 import Data.Time.Clock.POSIX
@@ -19,16 +22,15 @@ j = o + 2*dx - 2*dy
 k = o - 2*dx - 3*dy
 l = o + 2*dx - 3*dy
 
+    
+wiggle :: GLfloat -> GLfloat -> V3 GLfloat -> M33 GLfloat
+wiggle t w (V3 x y _) = V3 (V3 1 0 offset) (V3 0 1 offset) (V3 0 0 1)
+    where offset = sin (2*pi*w*t) * x * y 
 
-w = 2*pi
-wiggle :: GLfloat -> V3 GLfloat -> M33 GLfloat
-wiggle t (V3 x y _) = V3 (V3 1 0 offset) (V3 0 1 offset) (V3 0 0 1)
-    where offset = sin (w*t) * x * y 
-
-render primative points t = renderPrimitive primative $
+render primative points t w = renderPrimitive primative $
                             mapM_ (\(V3 x y z) -> vertex $ Vertex3 x y z) (genPoints t)
     where genPoints t = map move points
-              where move p = wiggle t p !* p
+              where move p = wiggle t w p !* p
 
 render1 = render TriangleStrip points
           where points :: [V3 GLfloat]
@@ -40,12 +42,28 @@ render2 = render Lines points
                          ,f , e, g, f, h, g, h, g, i, h, i, h, j, i, j, i, k
                          ,j , k, j, l, k, l]
 
-main :: IO ()
-main = do
+data Opts = Opts
+  { freq :: String }
+
+optsParser :: Parser Opts
+optsParser = Opts
+             <$> strOption
+             ( long "freq"
+               <> help "Speed to dance at" 
+               <> value "1")
+
+main =  execParser opts >>= main'
+    where
+      opts = info (helper <*> optsParser)
+             ( fullDesc
+               <> progDesc "Make a letter I dance at a given freq"
+               <> header "MP1 - By Marcell Jose Vazquez-Chanlatte")
+
+main' (Opts w )= do
   let _progName = "MP1"
   _args <- initialize _progName []
   _window <- createWindow _progName
-  displayCallback $= display
+  displayCallback $= display (read w)
   idleCallback $= Just idle
   mainLoop
  
@@ -53,11 +71,11 @@ idle :: IdleCallback
 idle = do
   postRedisplay Nothing
 
-display :: DisplayCallback
-display = do 
+display :: GLfloat -> DisplayCallback
+display w = do 
   clear [ColorBuffer]
   t <- getPOSIXTime
-  (if round t `mod` 5 < 2 then render1 else render2) (stepSize t)
+  (if round t `mod` 5 < 2 then render1 else render2) (stepSize t) w
   swapBuffers
 
 stepSize :: POSIXTime -> GLfloat
