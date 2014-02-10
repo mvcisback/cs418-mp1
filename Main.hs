@@ -40,7 +40,7 @@ render2 = render Lines points
           where points :: [V3 GLfloat]
                 points = [a, b, a, c , b, c , b, d, c, d, c, e, d, e , d, f , e
                          ,f , e, g, f, h, g, h, g, i, h, i, h, j, i, j, i, k
-                         ,j , k, j, l, k, l]
+                         ,j , k, j, l, k, l, f, g]
 
 data Opts = Opts
   { freq :: String }
@@ -81,3 +81,4 @@ display w = do
 stepSize :: POSIXTime -> GLfloat
 stepSize t = (fromRational . toRational) x :: GLfloat
     where x = abs $ (fromIntegral . truncate $ t) - t
+
