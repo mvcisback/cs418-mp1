@@ -22,10 +22,14 @@ videos produced by: ffmpeg -f x11grab -s 1024x768 -r 25 -i :0.0 output.mkv
 there seems to be a warm up period (the video caputures at a lower framerate and then it stablizes)
 
 ## Video Files ##
- - output_1.mkv : Animation freq set to 1x
- - output_2.mkv : Animation freq set to 2x
- - output_0.mkv : Animation freq set to 0x
- - output_I.mkv : Animation with epsilon tuned for best I approx
+- output_0.mkv : Animation freq set to 0x
+http://youtu.be/DN7oKrY5NUg
+- output_1.mkv : Animation freq set to 1x
+http://youtu.be/tp0IpmAu1rA
+- output_2.mkv : Animation freq set to 2x
+http://youtu.be/hE5y2vH3fXo
+- output_I.mkv : Animation with epsilon tuned for best I approx
+http://youtu.be/_yjXx5LloyA
 
 # Requirments to execute binary #
 - Glut
