@@ -27,8 +27,9 @@ wiggle :: GLfloat -> GLfloat -> V3 GLfloat -> M33 GLfloat
 wiggle t w (V3 x y _) = V3 (V3 1 0 offset) (V3 0 1 offset) (V3 0 0 1)
     where offset = sin (2*pi*w*t) * x * y 
 
-render primative points t w = renderPrimitive primative $
-                            mapM_ (\(V3 x y z) -> vertex $ Vertex3 x y z) (genPoints t)
+render primative points t w = renderPrimitive primative $ do
+                                mapM_ (\(V3 x y z) -> vertex $ Vertex3 x y z) (genPoints t)
+                                                                      
     where genPoints t = map move points
               where move p = wiggle t w p !* p
 
@@ -73,6 +74,7 @@ idle = do
 
 display :: GLfloat -> DisplayCallback
 display w = do 
+  clearColor $= Color4 0 0.1686 0.2117 1 -- Solarized (from the internet)
   clear [ColorBuffer]
   t <- getPOSIXTime
   (if round t `mod` 5 < 2 then render1 else render2) (stepSize t) w
